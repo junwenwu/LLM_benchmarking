@@ -24,9 +24,7 @@ The converted model is located under the $OUTPUT_DIR/dldt.
 
 2. Performance benchmarking:
 ```
-{
         python3 benchmark.py -m $OUTPUT_DIR/dldt/FP32/ -ic $OUTPUT_TOKEN_SIZE -lc config.json -s $RANDOM_SEED -p $PROMPT -n $ITERATION_NUMBER
-}
 ```
 Please refer to the help file on the detailed explanation of the input parameters.
 
