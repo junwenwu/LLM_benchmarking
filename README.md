@@ -12,17 +12,13 @@ The scrptis used for benchmarking are located under llm_bench/python.
 
 For FP32/FP16 model:
 ```
-{
         python3 convert.py --model_id stabilityai/stablelm-2-1_6b --output_dir $OUTPUT_DIR -p FP32|FP16
-}
 ````
 
 
 2. For quantized model (available choices for quantization are INT8, INT8_ASYM, INT_SYM, 4BIT_DEFAULT, INT4_ASYM and INT4_SYM)
 ```
-{
         python3 convert.py --model_id stabilityai/stablelm-2-1_6b --output_dir $OUTPUT_DIR -c $COMPRESSION_METHOD
-}
 ```
 The converted model is located under the $OUTPUT_DIR/dldt.
 
