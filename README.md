@@ -9,6 +9,11 @@ https://github.com/openvinotoolkit/openvino.genai
 Please refer to [how to install OpenVINO](https://docs.openvino.ai/install) on the OpenVINO installation in order to use the OpenVINO GenAI pipeline.
 For the usage please refer to the documentation here: https://docs.openvino.ai/2023.3/gen_ai_guide.html.
 
+Step 0: Prepare Environment
+```
+sudo apt update
+sudo apt install git-lfs -y
+```
 
 Step 1: Setup environment
 ```
