@@ -1,13 +1,12 @@
 
-# LLM_benchmarking
+# LLM Benchmarking with OpenVINO
 
-## GenAI Pipeline Repository
-This explains the process on how to benchmark stability.AI LM2 1.6b model. It uses the GenAI pipeline to evaluate the performance.
-GenAI repo is located at:
-https://github.com/openvinotoolkit/openvino.genai
-
-Please refer to [how to install OpenVINO](https://docs.openvino.ai/install) on the OpenVINO installation in order to use the OpenVINO GenAI pipeline.
-For the usage please refer to the documentation here: https://docs.openvino.ai/2023.3/gen_ai_guide.html.
+This explains the process of benchmarking LLM with OpenVINO.
+For additional information, please refer to the following resources:
+- OpenVINO [GenAI Pipeline Repository](https://github.com/openvinotoolkit/openvino.genai)
+- OpenVINO [Benchmarking script for LLM](https://github.com/openvinotoolkit/openvino.genai/tree/master/llm_bench/python)
+- OpenVINO [Large Language Model Inference Guide](https://docs.openvino.ai/2024/learn-openvino/llm_inference_guide.html)
+  
 
 Step 0: Prepare Environment
 ```
@@ -37,35 +36,36 @@ Step 4: Login into huggingface if you need to use non public models.
 huggingface-cli login
 ```
 
-Step 3:  Convert the model to OpenVINO format. Select any huggingface model. In the following example we use `stabilityai/stablelm-2-1_6b`
+Step 3:  Convert the model to OpenVINO format. 
 
-The scripts used for benchmarking are located under llm_bench/python.
-
-
-- For FP32/FP16 model. `--save_orig` will save the pytorch model as well.
+- Select any huggingface model. In the following example we use `stabilityai/stablelm-2-1_6b`
+- The scripts used for benchmarking are located under `llm_bench/python`.
+- See more [details on parameters and options here](https://github.com/openvinotoolkit/openvino.genai/tree/master/llm_bench/python#2-convert-a-model-to-openvino-ir).
+- `--save_orig` will save the pytorch model as well.
+  
 ```
 # assuming you are in llm_bench/python/ directory
 python3 convert.py \
 --model_id stabilityai/stablelm-2-1_6b \
 --output_dir models/stablelm-2-1_6b \
--p FP32|FP16
+--precision FP16 \
 --save_orig
 ```
 
-- For compressed models: For quantized model (available choices for quantization are INT8, INT8_ASYM, INT_SYM, 4BIT_DEFAULT, INT4_ASYM and INT4_SYM)
-
-- The following with convert the model to FP32, INT8, INT4 and also save the original Pytorch model. 
+- For compressed/quantized model - [available choices](https://github.com/openvinotoolkit/openvino.genai/tree/master/llm_bench/python#2-convert-a-model-to-openvino-ir) for quantization are INT8, INT8_ASYM, INT_SYM, 4BIT_DEFAULT, INT4_ASYM and INT4_SYM.
+- The following command will convert the model to FP32, INT8, INT4 and also save the original Pytorch model. 
 ```
 python3 convert.py \
 --model_id stabilityai/stablelm-2-1_6b \
 --output_dir models/stablelm-2-1_6b \
--c INT8 4BIT_DEFAULT \
+--compress_weights INT8 4BIT_DEFAULT \
 --save_orig
 ```
 
 ### The converted model(s) are located under the `$OUTPUT_DIR/dldt`
 
 Step 4: Performance benchmarking:
+- See additional [benchmarking parameters here](https://github.com/openvinotoolkit/openvino.genai/tree/master/llm_bench/python#3-benchmarking).
 
 ```
 python3 benchmark.py \
