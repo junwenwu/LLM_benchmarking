@@ -24,7 +24,7 @@ pip install update --upgrade
 Step 2:  Setup OpenVINO LLM benchmarking repo
 ```
 git clone  https://github.com/openvinotoolkit/openvino.genai.git
-cd llm_bench/python/
+cd openvino.genai/llm_bench/python/
 pip install -r requirements.txt  
 
 # Optional, install the latest openvino_nightly if needed
