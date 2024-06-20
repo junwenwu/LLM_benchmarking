@@ -29,7 +29,7 @@ pip install -r requirements.txt
 
 # Optional, install the latest openvino_nightly if needed
 pip uninstall openvino
-pip install openvino_nightly 
+pip install --upgrade --pre openvino openvino-tokenizers --extra-index-url https://storage.openvinotoolkit.org/simple/wheels/nightly
 ```
 Step 4: Login into huggingface if you need to use non public models.
 ``` 
@@ -41,7 +41,13 @@ Step 3:  Convert the model to OpenVINO format.
 - Select any huggingface model. In the following example we use `stabilityai/stablelm-2-1_6b`
 - The scripts used for benchmarking are located under `llm_bench/python`.
 - See more [details on parameters and options here](https://github.com/openvinotoolkit/openvino.genai/tree/master/llm_bench/python#2-convert-a-model-to-openvino-ir).
-- `--save_orig` will save the pytorch model as well.
+- `--save_orig` will save the pytorch model as well in `<output_dir>/pytorch` subdirectory.
+- `--ratio` - Compression ratio between primary and backup precision, e.g. INT4/INT8.
+- `--group_size` - Size of the group of weights that share the same quantization parameters
+
+### NOTE: 
+- Smaller group_size and ratio values usually improve accuracy at the sacrifice of the model size and inference latency.
+- See more details on [OpenVINO LLM weight compression here](https://docs.openvino.ai/2024/openvino-workflow/model-optimization-guide/weight-compression.html)
   
 ```
 # assuming you are in llm_bench/python/ directory
@@ -52,7 +58,7 @@ python3 convert.py \
 --save_orig
 ```
 
-- For compressed/quantized model - [available choices](https://github.com/openvinotoolkit/openvino.genai/tree/master/llm_bench/python#2-convert-a-model-to-openvino-ir) for quantization are INT8, INT8_ASYM, INT_SYM, 4BIT_DEFAULT, INT4_ASYM and INT4_SYM.
+- For compressed/quantized model - [available choices](https://github.com/openvinotoolkit/openvino.genai/tree/master/llm_bench/python#2-convert-a-model-to-openvino-ir) for quantization are INT8, INT8_ASYM, INT8_SYM, 4BIT_DEFAULT, INT4_ASYM and INT4_SYM.
 - The following command will convert the model to FP32, INT8, INT4 and also save the original Pytorch model. 
 ```
 python3 convert.py \
