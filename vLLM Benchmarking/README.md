@@ -7,10 +7,17 @@ For additional information, please refer to the following resources:
 - OpenVINO [Large Language Model Inference Guide](https://docs.openvino.ai/2024/learn-openvino/llm_inference_guide.html)
 - OpenVINO [Benchmarking script for vLLM](https://docs.vllm.ai/en/latest/getting_started/openvino-installation.html)
   
+## Table of Contents
 
-## 1. Setup and Installation:
+- [Table of Content](#table-of-contents)
+- [Installation Guide](#-installation-guide)
+- [Benchmarking with vLLM and OpenVINO backend](#-benchmarking-vllm-OpenVINO)
+- [For Throughput Benchmarking](#for-throughput-benchmarking)
+- [For Model Serving Benchmarking](#for-model-serving) 
+  
+##  Installation Guide
    
-#### Step 1.0: Prepare Environment:
+### Step 1.0: Prepare Environment:
 
 #### First, install Python. For example, on Ubuntu 22.04, you can run:
 
@@ -44,13 +51,13 @@ docker build -f Dockerfile.openvino -t vllm-openvino-env .
 docker run -it --rm vllm-openvino-env
 ```
 
-#### Step 1.4: [optional] Login into huggingface if you need to use non public models:
+#### Step 1.4: [Optional] Login into huggingface if you need to use non public models:
 
 huggingface-cli login
 
-## 2. LLM benchmarking (vLLM + OpenVINO):
+## Benchmarking with vLLM and OpenVINO backend
 
-### 2.1 Benchmarking for throughput scenario with becnchmark_throughput.py (standalone):
+### For Throughput Benchmarking
 
 Sample command args:
 
@@ -62,7 +69,7 @@ Sample command args:
     --dataset <path-to-sample-prompt-file> \
     --enable-chunked-prefill --max-num-batched-tokens 256
 
-##### with ```--model``` set to huggingface model id:
+#### with ```--model``` set to huggingface model id
     
     VLLM_OPENVINO_KVCACHE_SPACE=100 \
     VLLM_OPENVINO_CPU_KV_CACHE_PRECISION=u8 \
@@ -72,7 +79,7 @@ Sample command args:
     --dataset vllm/benchmarks/ShareGPT_V3_unfiltered_cleaned_split.json \
     --enable-chunked-prefill --max-num-batched-tokens 256
 
-##### with ```--model``` set to local directory (openvino.genai optimized OpenVINO model path):
+#### with ```--model``` set to local directory (openvino.genai optimized OpenVINO model path)
     
     VLLM_OPENVINO_KVCACHE_SPACE=40 \
     VLLM_OPENVINO_CPU_KV_CACHE_PRECISION=u8 \
@@ -83,9 +90,9 @@ Sample command args:
     --enable-chunked-prefill --max-num-batched-tokens 256  
 
 
-#### Input default args:
+#### Input default args
 
-```
+```console
 num_prompts: 1000
 seed: 0
 max_length: 400
@@ -104,9 +111,9 @@ input_basename: 'input'
 outfile_basename: 'output'
 keep_tokens: True
 ```
-#### Sample output logs:
+#### Sample output logs
 
-```
+```console
 WARNING 08-13 20:31:34 openvino.py:130] OpenVINO IR is available for provided model id ../openvino.genai/llm_bench/python/meta
 -llama-3x8b-ov/pytorch/dldt/compressed_weights/OV_FP32-INT8. This IR will be used for inference as-is, all possible options th
 at may affect model conversion are ignored.                    
@@ -127,25 +134,9 @@ Throughput: 1.83 requests/s, 755.89 tokens/s
 **Note**: ```requests/s``` in througput metric indicates, throughput per inference (i.e., per prompt). 
 The default value set to ```num_prompts=1000```
 
-#### Key output metrics:
+### Additional vLLM env settings
 
-```
-Elapsed Time: The total time taken to complete all inference requests. This is measured in seconds.
-Number of Requests per Second: The throughput measured in terms of the number of inference requests completed per second.
-This is calculated as the total number of requests divided by the elapsed time.
-
-Tokens per Second: The throughput measured in terms of the number of tokens processed per second.
-This is calculated as the total number of tokens (input and output combined) divided by the elapsed time.
-
-Total Number of Tokens:The sum of all tokens (input and output) processed across all requests during the benchmark.
-Requests per Second (Optional JSON Output):
-
-If specified, the results including elapsed time, number of requests, total number of tokens, requests per second,
-and tokens per second are saved to a JSON file.
-```
-## Additional vLLM env settings:
-
-```
+```console
 # (CPU backend only) CPU key-value cache space.
 # default is 4GB
 "VLLM_CPU_KVCACHE_SPACE":
@@ -175,20 +166,20 @@ lambda: bool(os.getenv("VLLM_OPENVINO_ENABLE_QUANTIZED_WEIGHTS", False)),
 
 More info can be found [here](https://docs.vllm.ai/en/latest/serving/env_vars.html)
 
-### 2.2 Benchmarking for model serving scenario with becnchmark_serving.py:
+## For Model Serving Benchmarking
 
-#### Setup OpenVINO Model Server 
+### Setup OpenVINO Model Server
 
 Pull public image with CPU only support or including also GPU support.
 
-```
+```bash
 docker pull openvino/model_server:latest-gpu
 docker pull openvino/model_server:latest
 ```
 
-#### [Optional] Build model server from source and install dependencies
+### [Optional] Build model server from source and install dependencies
 
-```
+```bash
 git clone https://github.com/openvinotoolkit/model_server.git
 cd model_server
 make release_image RUN_TESTS=0
@@ -196,35 +187,40 @@ make release_image RUN_TESTS=0
 
 Install dependencies:
 
-```
+```bash
  pip3 install -r https://raw.githubusercontent.com/openvinotoolkit/model_server/releases/2024/3/demos/continuous_batching/requirements.txt
 ```
 
-#### Model Preparation
+### Model Preparation
 
 Install python dependencies for conversion scripts (below command using OpenVINO 2024.4.0 Release)
 
-```
+```bash
 export PIP_EXTRA_INDEX_URL="https://download.pytorch.org/whl/cpu"
 pip3 install "optimum-intel[nncf,openvino]"@git+https://github.com/huggingface/optimum-intel.git@fe77316c5a25c7b0e8ae97c23776688448490be2 openvino_tokenizers==2024.4.0 openvino==2024.4.0
 ```
-#### Run optimum-intel to download and quantize HF model (Meta-Llama-3-8B-Instruct):
+### Run optimum-intel to download and quantize HF model (Meta-Llama-3-8B-Instruct)
 
-```
+```bash
+
 cd demos/continuous_batching
+
 convert_tokenizer -o Meta-Llama-3-8B-Instruct \
 --utf8_replace_mode replace --with-detokenizer \
 --skip-special-tokens --streaming-detokenizer \
---not-add-special-tokens meta-llama/Meta-Llama-3-8B-Instruct \
+--not-add-special-tokens meta-llama/Meta-Llama-3-8B-Instruct
+
 optimum-cli export openvino --disable-convert-tokenizer \
 --model meta-llama/Meta-Llama-3-8B-Instruct \
 --weight-format fp16 Meta-Llama-3-8B-Instruct
 ```
 Note: Refer to step 1.4 for hf login
 
-#### Prepare graph.pbtxt and config.json
+### Prepare graph.pbtxt and config.json
 
-```cp graph.pbtxt Meta-Llama-3-8B-Instruct/```
+```
+cp graph.pbtxt Meta-Llama-3-8B-Instruct/
+```
 
 ```
 cat config.json
@@ -239,7 +235,7 @@ cat config.json
 }
 ```
 
-#### Launch OpenVINO model server
+### Launch OpenVINO model server
 
 ```
 docker run -d --rm -p 8000:8000 \
@@ -250,26 +246,26 @@ docker run -d --rm -p 8000:8000 \
 
 Wait for the model to load. You can check the status with a simple command:
 
-``` bash curl http://localhost:8000/v1/config ```
+`bash curl http://localhost:8000/v1/config`
 
-### 2.2 Benchmarking for serving scenario with becnchmark_serving.py:
+## Launching becnchmark_serving.py
 
-#### Clone vLLM repo
+### Clone vLLM repo
 
-```git clone https://github.com/vllm-project/vllm```
+`git clone https://github.com/vllm-project/vllm`
 
-#### Installing prerequisites and downloading sample dataset
+### Installing prerequisites and downloading sample dataset
 
-```
+```bash
 cd vllm
 pip3 install -r requirements-cpu.txt
 cd benchmarks
 wget https://huggingface.co/datasets/anon8231489123/ShareGPT_Vicuna_unfiltered/resolve/main/ShareGPT_V3_unfiltered_cleaned_split.json
 ```
 
-#### Starting client app for benchmarking
+### Starting client app for benchmarking
 
-```
+```bash
 python benchmark_serving.py --host localhost \
 --port 8000 --endpoint /v3/chat/completions \
 --backend openai-chat \
@@ -279,9 +275,9 @@ python benchmark_serving.py --host localhost \
 --request-rate inf
 ```
 
-##### Expected sample output benchmark metrics:
+### Expected sample output benchmark metrics
 
-```
+```console
 ============ Serving Benchmark Result ============
 Successful requests:                     100       
 Benchmark duration (s):                  83.82     
