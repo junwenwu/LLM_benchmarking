@@ -1,4 +1,3 @@
-![image](https://github.com/user-attachments/assets/f85ee8cc-52ea-4bb1-927b-35ab58cddc09)
 # vLLM Benchmarking with OpenVINO backend
 
 This explains the process of benchmarking vLLM with OpenVINO.
