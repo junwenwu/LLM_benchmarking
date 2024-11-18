@@ -12,8 +12,8 @@ For additional information, please refer to the following resources:
 - [Table of Content](#table-of-contents)
 - [Installation Guide](#-installation-guide)
 - [Benchmarking with vLLM and OpenVINO backend](#-benchmarking-vllm-OpenVINO)
-- [For Throughput Scenario](#for-throughput-benchmarking)
-- [For Model Serving Scenario](#for-model-serving-benchmarking) 
+- [For Throughput Scenario](#-for-throughput-scenario)
+- [For Model Serving Scenario](#-for-model-serving-scenario) 
   
 ##  Installation Guide
    
