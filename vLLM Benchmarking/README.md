@@ -12,8 +12,8 @@ For additional information, please refer to the following resources:
 - [Table of Content](#table-of-contents)
 - [Installation Guide](#-installation-guide)
 - [Benchmarking with vLLM and OpenVINO backend](#-benchmarking-vllm-OpenVINO)
-- [For Throughput Benchmarking](#for-throughput-benchmarking)
-- [For Model Serving Benchmarking](#for-model-serving) 
+- [For Throughput Scenario](#for-throughput-benchmarking)
+- [For Model Serving Scenario](#for-model-serving-benchmarking) 
   
 ##  Installation Guide
    
@@ -57,7 +57,7 @@ huggingface-cli login
 
 ## Benchmarking with vLLM and OpenVINO backend
 
-### For Throughput Benchmarking
+### For Throughput Scenario
 
 Sample command args:
 
@@ -166,7 +166,7 @@ lambda: bool(os.getenv("VLLM_OPENVINO_ENABLE_QUANTIZED_WEIGHTS", False)),
 
 More info can be found [here](https://docs.vllm.ai/en/latest/serving/env_vars.html)
 
-## For Model Serving Benchmarking
+## For Model Serving Scenario
 
 ### Setup OpenVINO Model Server
 
